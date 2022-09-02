@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Agregar Restaurante</title>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+		integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+	<link rel="stylesheet" href="./style.css">
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+</head>
+
+<body>
+	<div class="box-form" id="BoxForm">
+		<div class="left2">
+			<div class="overlay">
+				<h1></h1>
+				<p></p>
+				<span>
+					<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+					<input type="button" value="Regresar" id="regresar">
+					<h1>............................</h1>
+
+
+			</div>
+		</div>
+		<div class="right2">
+			<br><br>
+			<h1>Agrega un nuevo restaurant:</h1>
+				<input type="text" id = "restname" placeholder="Nombre del restaurant" style="margin-left: 0px;"></input>
+				
+				<input type="text" id = "description" placeholder="Descripcion del restaurant" style="margin-left: 0px;"></input>
+
+				<div>
+					<br>
+					<input type="submit" value="Enviar" id="insert"></input>
+
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	<script src="https://www.gstatic.com/firebasejs/8.4.2/firebase.js"></script>
+	<script type="module">
+
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-app.js";
+		import {
+			getFirestore,
+			collection,
+			query,
+			getDocs,
+			onSnapshot,
+			addDoc,
+			deleteDoc,
+			doc,
+			getDoc,
+			updateDoc,
+		} from "https://www.gstatic.com/firebasejs/9.6.2/firebase-firestore.js";
+
+		const firebaseConfig = {
+			apiKey: "AIzaSyBC1vaPbLIOuvfcR6vmqnCjYJrp4ZYlhxo",
+			authDomain: "restaurant-app-review-ststem.firebaseapp.com",
+			projectId: "restaurant-app-review-ststem",
+			storageBucket: "restaurant-app-review-ststem.appspot.com",
+			messagingSenderId: "780535976763",
+			appId: "1:780535976763:web:632fd8076802c577841d1e",
+			measurementId: "G-3483VMN6PB"
+		};
+
+		const app = initializeApp(firebaseConfig);
+		const db = getFirestore();
+		var restauranr_n, description_n;
+		let button = document.getElementById('regresar');
+
+button.onclick = function(e) {
+    e.preventDefault();
+
+    // Replace localhost and the folder name
+    // based on your setup
+    location.href = 'review.html';
+}
+		function readFom() {
+			restauranr_n = document.getElementById("restname").value;
+			description_n = document.getElementById("description").value;
+			console.log(restauranr_n, description_n);
+		}
+
+		const q = query(collection(db, "restaurants"));
+
+		const querySnapshot = await getDocs(q);
+		
+		const getdoccc = getDocs(query(collection(db, "restaurants")));
+			
+
+		document.getElementById("insert").onclick = function () {
+			readFom();
+			var existe =0
+			querySnapshot.forEach((doc) => {
+				console.log(doc.id, " => ", doc.data());
+				if(restauranr_n == doc.data()['Nombre']){
+				alert("El restaurant ya existe"); 
+				existe = 1;
+				}
+
+			});
+
+			/**
+	   * Save a New Task in Firestore
+		*@param {string} nombre the title of the Task
+	   * @param {string} referencia the description of the Task
+	   */
+			const saveTask = (nombre, referencia) =>
+				addDoc(collection(db, "restaurants"), {
+					Nombre: restauranr_n,
+					Referencia: description_n,
+				});
+				
+			if (existe ==0 ) {
+				saveTask(restauranr_n, description_n);
+			alert("Se ha agregado el restaurant");
+			}
+			document.getElementById("restname").value="";
+			document.getElementById("description").value="";
+			//if(existe =1)		window.location.reload();
+		};
+
+	</script>
+
+</body>
+
+</html>

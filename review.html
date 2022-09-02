@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Review Restaurante</title>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+		integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+	<link rel="stylesheet" href="./style.css">
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script type="module">
+
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-app.js";
+		import { getFirestore, collection, query, where, getDocs, onSnapshot, addDoc, deleteDoc, doc, getDoc, updateDoc, } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-firestore.js";
+
+		var firebaseConfig0 = {
+			apiKey: "AIzaSyBC1vaPbLIOuvfcR6vmqnCjYJrp4ZYlhxo",
+			authDomain: "restaurant-app-review-ststem.firebaseapp.com",
+			projectId: "restaurant-app-review-ststem",
+			storageBucket: "restaurant-app-review-ststem.appspot.com",
+			messagingSenderId: "780535976763",
+			appId: "1:780535976763:web:632fd8076802c577841d1e",
+			measurementId: "G-3483VMN6PB"
+		};
+
+		var app0 = initializeApp(firebaseConfig0);
+		firebase.initializeApp(firebaseConfig0);
+		var db0 = getFirestore();
+
+		const q = query(collection(db0, "restaurants"));
+
+		const querySnapshot = await getDocs(q);
+		const getdoccc = getDocs(query(collection(db0, "restaurants")));
+		const restlist = [];
+
+		$(document).ready(function () {
+			querySnapshot.forEach((doc) => {
+				console.log(doc.id, " => ", doc.data());
+				restlist.push(doc.data()['Nombre']);
+				var strtoappend = "<option value='" + doc.id + "'>" + doc.data()['Nombre'] + "</option>";
+
+				console.log(strtoappend);
+				$("#rest_names").append(strtoappend);
+			});
+		});
+
+	</script>
+</head>
+
+<body>
+	<div class="box-form" id="BoxForm">
+		<div class="left2">
+			<div class="overlay">
+				<h1></h1>
+				<p></p>
+				<span>
+					<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+					<input type="button" id="agregar_rest" style="margin-left: 25; size-adjust: auto;"
+						value="Agregar restaurante">
+					<h1>...........................</h1>
+			</div>
+		</div>
+		<div class="right2">
+			<br><br>
+			<h1>Ratea el restaurant!</h1>
+			<div class="inputs">
+				<select name="restaurant_names" id="rest_names" title="Selecciona el restaurant">
+					<option>Selecciona el restaurant</option>
+				</select>
+				<div class="rating" id="rate" title="Selecciona la puntuacion">
+					<input type="radio" name="rate" value="5" id="5"><label for="5">☆</label>
+					<input type="radio" name="rate" value="4" id="4"><label for="4">☆</label>
+					<input type="radio" name="rate" value="3" id="3"><label for="3">☆</label>
+					<input type="radio" name="rate" value="2" id="2"><label for="2">☆</label>
+					<input type="radio" name="rate" value="1" id="1"><label for="1">☆</label>
+
+				</div>
+				<textarea type="text" placeholder="Write a comment" v-model="newItem" id="comment"
+					@keyup.enter="addItem()"></textarea>
+
+				<div>
+					<br>
+					<input type="submit" value="Enviar" id="insert"></input>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	<script src="https://www.gstatic.com/firebasejs/8.4.2/firebase.js"></script>
+	<script type="module">
+
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-app.js";
+		import {
+			getFirestore,
+			collection,
+			getDocs,
+			onSnapshot,
+			addDoc,
+			deleteDoc,
+			doc,
+			getDoc,
+			updateDoc,
+		} from "https://www.gstatic.com/firebasejs/9.6.2/firebase-firestore.js";
+
+		const firebaseConfig = {
+			apiKey: "AIzaSyBC1vaPbLIOuvfcR6vmqnCjYJrp4ZYlhxo",
+			authDomain: "restaurant-app-review-ststem.firebaseapp.com",
+			projectId: "restaurant-app-review-ststem",
+			storageBucket: "restaurant-app-review-ststem.appspot.com",
+			messagingSenderId: "780535976763",
+			appId: "1:780535976763:web:632fd8076802c577841d1e",
+			measurementId: "G-3483VMN6PB"
+		};
+
+		const app = initializeApp(firebaseConfig);
+		const db = getFirestore();
+		var rollV, nameV, genderV;
+		let button = document.getElementById('agregar_rest');
+
+		button.onclick = function (e) {
+			e.preventDefault();
+
+			// Replace localhost and the folder name
+			// based on your setup
+			location.href = 'addrestaurant.html';
+		}
+		function readFom() {
+			rollV = document.querySelector('input[name="rate"]:checked').value;
+			nameV = document.getElementById("comment").value;
+			genderV = document.getElementById("rest_names").value;
+			console.log(rollV, nameV, genderV);
+		}
+
+		document.getElementById("insert").onclick = function () {
+			readFom();
+			/**
+	   * Save a New Task in Firestore
+		*@param {string} puntuacion the title of the Task
+	   * @param {string} comentario the description of the Task
+	   * @param {string} gender the description of the Task
+	   */
+			const saveTask = (puntuacion, comentario) =>
+				addDoc(collection(doc(collection(db, "restaurants"), genderV), "review"), {
+					puntuacion: rollV,
+					comentario: nameV,
+				});
+			saveTask(rollV, nameV);
+
+			alert("Se ha enviado su puntuacion!");
+		};
+	</script>
+
+</body>
+
+</html>
